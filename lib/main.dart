@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import './theme.dart';
+import './routes.dart';
 import './screens/home_screen.dart';
 
 void main() => runApp(const MyApp());
@@ -9,9 +11,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'The Movie App',
-      home: HomeScreen(),
+      debugShowCheckedModeBanner: false,
+      initialRoute: HomeScreen.routeName,
+      routes: routes,
+      theme: theme(),
     );
   }
 }
