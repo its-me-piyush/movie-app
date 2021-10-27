@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'Flutter App',
+      title: 'The Movie App',
       home: HomeScreen(),
     );
   }
