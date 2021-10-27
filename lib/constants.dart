@@ -1,3 +1,3 @@
 import 'package:flutter/material.dart';
 
-const maPrimaryColor = Colors.red;
+const maPrimaryColor = Color(0xffd91a36);
