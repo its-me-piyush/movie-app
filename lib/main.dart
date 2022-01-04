@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import './theme.dart';
 import './routes.dart';
-import './screens/home_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -11,12 +11,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'The Movie App',
-      debugShowCheckedModeBanner: false,
-      initialRoute: HomeScreen.routeName,
-      routes: routes,
-      theme: theme(),
+    return MultiProvider(
+      providers: const [
+        
+      ],
+      child: MaterialApp(
+        title: 'The Movie App',
+        debugShowCheckedModeBanner: false,
+        // initialRoute: HomeScreen.routeName,
+        routes: routes,
+        theme: theme(),
+      ),
     );
   }
 }
