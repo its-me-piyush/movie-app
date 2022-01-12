@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 ThemeData theme() {
   return ThemeData(
     scaffoldBackgroundColor: Colors.black,
+    fontFamily: 'NunitoSans',
     primarySwatch: MaterialColor(const Color(0xffd91a36).value, const {
       50: Color(0xfffce8eb),
       100: Color(0xfff7bbc4),

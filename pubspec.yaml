@@ -29,7 +29,6 @@ environment:
 dependencies:
   carousel_slider: ^4.0.0
   cupertino_icons: ^1.0.2
-  dio: ^4.0.1
   flutter:
     sdk: flutter
   http: ^0.13.4
@@ -62,12 +61,14 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+  fonts:
+    - family: NunitoSans
+      fonts:
+        - asset: assets/fonts/nunito/NunitoSans-Regular.ttf
+        - asset: assets/fonts/nunito/NunitoSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/nunito/NunitoSans-Light.ttf
+          weight: 300
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
