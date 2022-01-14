@@ -9,6 +9,8 @@ import '../models/genres_models.dart';
 class GenresProvider with ChangeNotifier {
   final List<GenresModel> _trial = [];
 
+  // Sarthak comment
+
   // Future to get geners list from the url
   Future<void> getGeners() async {
     try {
