@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app_mark_3/provider/top_row_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'theme.dart';
@@ -17,6 +18,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(
           value: GenresProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: TopRowProvider(),
         ),
       ],
       child: MaterialApp(
