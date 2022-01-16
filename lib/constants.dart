@@ -8,3 +8,4 @@ const maPrimaryColor = Color(0xffd91a36);
 const maPrimaryLightColor = Color(0xFFf4bac3);
 const maSecondaryColor = Color(0xFF979797);
 const maTextColor = Colors.white;
+const maGlassGloss = Color(0xFF1B1B22);

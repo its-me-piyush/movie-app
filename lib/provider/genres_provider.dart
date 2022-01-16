@@ -33,6 +33,8 @@ class GenresProvider with ChangeNotifier {
           ),
         );
       }
+      var dummy = _trial.first;
+      dummy.isSelected = true;
     } catch (e) {
       rethrow;
     }
@@ -41,5 +43,12 @@ class GenresProvider with ChangeNotifier {
   // getter for accessing the genres list
   List<GenresModel> get geners {
     return [..._trial];
+  }
+
+  void changeSelected(int id) {
+    var dummy = _trial.firstWhere((element) => element.isSelected);
+    dummy.isSelected = false;
+    _trial.firstWhere((element) => element.id == id).isSelected = true;
+    notifyListeners();
   }
 }
