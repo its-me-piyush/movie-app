@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '/models/top_row_models.dart';
 
 class TopRowProvider with ChangeNotifier {
+  String whatSelected = '001';
   List<TopRowModels> items = [
     TopRowModels(
       id: '001',
@@ -30,6 +31,11 @@ class TopRowProvider with ChangeNotifier {
     dummy.isSelected = !dummy.isSelected;
     dummy = items.firstWhere((element) => element.id == id);
     dummy.isSelected = !dummy.isSelected;
+    whatSelected = dummy.id;
     notifyListeners();
+  }
+
+  String getWhatSelected() {
+    return items.firstWhere((element) => element.isSelected).id;
   }
 }

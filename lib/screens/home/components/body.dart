@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_app_mark_3/constants.dart';
 import 'package:movie_app_mark_3/provider/genres_provider.dart';
 import 'package:movie_app_mark_3/provider/top_row_provider.dart';
-import 'package:movie_app_mark_3/provider/tv_popular_provider.dart';
+import 'package:movie_app_mark_3/provider/get_popular_provider.dart';
 import 'package:movie_app_mark_3/size_config.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +21,7 @@ class Body extends StatelessWidget {
             const CustomTopRow(),
 
             // Custom Tv Popular List
-            const CustomPopularTvTab(),
+            const CustomPopularTab(),
 
             // Gap
             SizedBox(
@@ -37,16 +37,20 @@ class Body extends StatelessWidget {
   }
 }
 
-class CustomPopularTvTab extends StatelessWidget {
-  const CustomPopularTvTab({
+class CustomPopularTab extends StatelessWidget {
+  const CustomPopularTab({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final whatSelected = Provider.of<TopRowProvider>(context).getWhatSelected();
     return FutureBuilder(
-      future:
-          Provider.of<TvPopularProvider>(context, listen: false).getTvPopular(),
+      future: whatSelected == '001'
+          ? Provider.of<GetPopularProvider>(context, listen: false)
+              .getTvPopular()
+          : Provider.of<GetPopularProvider>(context, listen: false)
+              .getMoviePopular(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(
@@ -94,7 +98,9 @@ class CustomPopularTvTab extends StatelessWidget {
                     left: 15,
                   ),
                   child: Text(
-                    "${data[index]['name']}".toUpperCase(),
+                    whatSelected == '001'
+                        ? "${data[index]['name']}".toUpperCase()
+                        : "${data[index]['title']}".toUpperCase(),
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -128,8 +134,12 @@ class GenresList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final whatsSelected =
+        Provider.of<TopRowProvider>(context).getWhatSelected();
     return FutureBuilder(
-      future: Provider.of<GenresProvider>(context, listen: false).getGeners(),
+      future: whatsSelected == '001'
+          ? Provider.of<GenresProvider>(context, listen: false).getTvGeners()
+          : Provider.of<GenresProvider>(context, listen: false).getMovieGeners(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -140,7 +150,9 @@ class GenresList extends StatelessWidget {
             ),
           );
         }
-        var genresList = Provider.of<GenresProvider>(context).geners;
+        var genresList = whatsSelected == '001'
+            ? Provider.of<GenresProvider>(context).tvGeners
+            : Provider.of<GenresProvider>(context).movieGeners;
 
         return SizedBox(
           width: double.infinity,
@@ -164,8 +176,11 @@ class GenresList extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  Provider.of<GenresProvider>(context, listen: false)
-                      .changeSelected(genresList[index].id);
+                  whatsSelected == '001'
+                      ? Provider.of<GenresProvider>(context, listen: false)
+                          .changeTvSelected(genresList[index].id)
+                      : Provider.of<GenresProvider>(context, listen: false)
+                          .changeMovieSelected(genresList[index].id);
                 },
                 child: Text(
                   genresList[index].name,
