@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app_mark_3/provider/top_row_provider.dart';
+import 'package:movie_app_mark_3/provider/tv_popular_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'theme.dart';
@@ -21,6 +22,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: TopRowProvider(),
+        ),
+        ChangeNotifierProvider.value(
+          value: TvPopularProvider(),
         ),
       ],
       child: MaterialApp(

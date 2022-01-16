@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_app_mark_3/constants.dart';
 import 'package:movie_app_mark_3/provider/genres_provider.dart';
 import 'package:movie_app_mark_3/provider/top_row_provider.dart';
+import 'package:movie_app_mark_3/provider/tv_popular_provider.dart';
 import 'package:movie_app_mark_3/size_config.dart';
 import 'package:provider/provider.dart';
 
@@ -17,70 +20,170 @@ class Body extends StatelessWidget {
             // Header options series | tv | mylist
             const CustomTopRow(),
 
-            FutureBuilder(
-              future: Provider.of<GenresProvider>(context, listen: false)
-                  .getGeners(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: maPrimaryLightColor,
-                      backgroundColor: maPrimaryColor,
-                      strokeWidth: 5,
-                    ),
-                  );
-                }
-                var genresList = Provider.of<GenresProvider>(context).geners;
-                for (var element in genresList) {
-                  print(element.name);
-                }
-                return SizedBox(
-                  width: double.infinity,
-                  height: getProportionateScreenHeight(50),
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: genresList.length,
-                    itemBuilder: (context, index) => Container(
-                      margin: EdgeInsets.only(
-                          right: getProportionateScreenWidth(10)),
-                      child: TextButton(
-                        style: ButtonStyle(
-                          backgroundColor: genresList[index].isSelected
-                              ? MaterialStateProperty.all(maPrimaryColor)
-                              : MaterialStateProperty.all(maGlassGloss),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                getProportionateScreenWidth(10),
-                              ),
-                            ),
-                          ),
-                        ),
-                        onPressed: () {
-                          Provider.of<GenresProvider>(context, listen: false)
-                              .changeSelected(genresList[index].id);
-                        },
-                        child: Text(
-                          genresList[index].name,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: genresList[index].isSelected
-                                ? getProportionateScreenWidth(20)
-                                : getProportionateScreenWidth(15),
-                            fontWeight: genresList[index].isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
+            // Custom Tv Popular List
+            const CustomPopularTvTab(),
+
+            // Gap
+            SizedBox(
+              height: getProportionateScreenHeight(20),
+            ),
+
+            // GenresList
+            const GenresList(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CustomPopularTvTab extends StatelessWidget {
+  const CustomPopularTvTab({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future:
+          Provider.of<TvPopularProvider>(context, listen: false).getTvPopular(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: maPrimaryLightColor,
+              backgroundColor: maPrimaryColor,
+              strokeWidth: 5,
+            ),
+          );
+        }
+
+        var data = snapshot.data as List;
+
+        return CarouselSlider.builder(
+          itemCount: data.length, // movies.length
+          itemBuilder: (context, index, _) {
+            return Stack(
+              alignment: Alignment.bottomLeft,
+              children: [
+                ClipRRect(
+                  child: CachedNetworkImage(
+                    imageUrl:
+                        // 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSRyzmDo83KY0dClkpu3VPWZ0tMfzySsKqBO8YAouuFJxwNXMOU',
+                        "https://image.tmdb.org/t/p/original/${data[index]['backdrop_path']}",
+                    height: MediaQuery.of(context).size.height / 3,
+                    width: MediaQuery.of(context).size.width,
+                    fit: BoxFit.fill,
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Container(
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(''),
                         ),
                       ),
                     ),
                   ),
-                );
-              },
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 15,
+                    left: 15,
+                  ),
+                  child: Text(
+                    "${data[index]['name']}".toUpperCase(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            );
+          },
+          options: CarouselOptions(
+            enableInfiniteScroll: true,
+            autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 5),
+            autoPlayAnimationDuration: const Duration(seconds: 2),
+            pauseAutoPlayOnTouch: true,
+            viewportFraction: 0.8,
+            enlargeCenterPage: true,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class GenresList extends StatelessWidget {
+  const GenresList({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Provider.of<GenresProvider>(context, listen: false).getGeners(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: maPrimaryLightColor,
+              backgroundColor: maPrimaryColor,
+              strokeWidth: 5,
             ),
-          ],
-        ),
-      ),
+          );
+        }
+        var genresList = Provider.of<GenresProvider>(context).geners;
+
+        return SizedBox(
+          width: double.infinity,
+          height: getProportionateScreenHeight(50),
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: genresList.length,
+            itemBuilder: (context, index) => Container(
+              margin: EdgeInsets.only(right: getProportionateScreenWidth(10)),
+              child: TextButton(
+                style: ButtonStyle(
+                  backgroundColor: genresList[index].isSelected
+                      ? MaterialStateProperty.all(maPrimaryColor)
+                      : MaterialStateProperty.all(maGlassGloss),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        getProportionateScreenWidth(10),
+                      ),
+                    ),
+                  ),
+                ),
+                onPressed: () {
+                  Provider.of<GenresProvider>(context, listen: false)
+                      .changeSelected(genresList[index].id);
+                },
+                child: Text(
+                  genresList[index].name,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: genresList[index].isSelected
+                        ? getProportionateScreenWidth(20)
+                        : getProportionateScreenWidth(15),
+                    fontWeight: genresList[index].isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
