@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_app_mark_3/constants.dart';
+import 'package:movie_app_mark_3/enumns.dart';
 import 'package:movie_app_mark_3/provider/genres_provider.dart';
 import 'package:movie_app_mark_3/provider/top_row_provider.dart';
 import 'package:movie_app_mark_3/provider/get_popular_provider.dart';
@@ -13,25 +14,39 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final whatSelected = Provider.of<TopRowProvider>(context).getWhatSelected();
+
     return SafeArea(
-      child: SizedBox(
-        child: ListView(
-          children: [
-            // Header options series | tv | mylist
-            const CustomTopRow(),
-
-            // Custom Tv Popular List
-            const CustomPopularTab(),
-
-            // Gap
-            SizedBox(
-              height: getProportionateScreenHeight(20),
+      child: ListView(
+        children: [
+          // Header options series | tv | mylist
+          const CustomTopRow(),
+          if (whatSelected == SelectionType.myList)
+            const Center(
+              child: Text(
+                'My List',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
+          if (whatSelected != SelectionType.myList)
+            Flex(
+              direction: Axis.vertical,
+              children: [
+                // Custom Tv Popular List
+                const CustomPopularTab(),
 
-            // GenresList
-            const GenresList(),
-          ],
-        ),
+                // Gap
+                SizedBox(
+                  height: getProportionateScreenHeight(20),
+                ),
+
+                // GenresList
+                const GenresList(),
+              ],
+            ),
+        ],
       ),
     );
   }
@@ -45,8 +60,9 @@ class CustomPopularTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final whatSelected = Provider.of<TopRowProvider>(context).getWhatSelected();
+
     return FutureBuilder(
-      future: whatSelected == '001'
+      future: whatSelected == SelectionType.series
           ? Provider.of<GetPopularProvider>(context, listen: false)
               .getTvPopular()
           : Provider.of<GetPopularProvider>(context, listen: false)
@@ -98,7 +114,7 @@ class CustomPopularTab extends StatelessWidget {
                     left: 15,
                   ),
                   child: Text(
-                    whatSelected == '001'
+                    whatSelected == SelectionType.series
                         ? "${data[index]['name']}".toUpperCase()
                         : "${data[index]['title']}".toUpperCase(),
                     style: const TextStyle(
@@ -137,9 +153,10 @@ class GenresList extends StatelessWidget {
     final whatsSelected =
         Provider.of<TopRowProvider>(context).getWhatSelected();
     return FutureBuilder(
-      future: whatsSelected == '001'
+      future: whatsSelected == SelectionType.series
           ? Provider.of<GenresProvider>(context, listen: false).getTvGeners()
-          : Provider.of<GenresProvider>(context, listen: false).getMovieGeners(),
+          : Provider.of<GenresProvider>(context, listen: false)
+              .getMovieGeners(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -150,7 +167,7 @@ class GenresList extends StatelessWidget {
             ),
           );
         }
-        var genresList = whatsSelected == '001'
+        var genresList = whatsSelected == SelectionType.series
             ? Provider.of<GenresProvider>(context).tvGeners
             : Provider.of<GenresProvider>(context).movieGeners;
 
@@ -176,7 +193,7 @@ class GenresList extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  whatsSelected == '001'
+                  whatsSelected == SelectionType.series
                       ? Provider.of<GenresProvider>(context, listen: false)
                           .changeTvSelected(genresList[index].id)
                       : Provider.of<GenresProvider>(context, listen: false)

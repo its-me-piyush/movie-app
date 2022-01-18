@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 
+import '/enumns.dart';
 import '/models/top_row_models.dart';
 
 class TopRowProvider with ChangeNotifier {
-  String whatSelected = '001';
+  SelectionType whatSelected = SelectionType.series;
   List<TopRowModels> items = [
     TopRowModels(
       id: '001',
@@ -31,11 +32,19 @@ class TopRowProvider with ChangeNotifier {
     dummy.isSelected = !dummy.isSelected;
     dummy = items.firstWhere((element) => element.id == id);
     dummy.isSelected = !dummy.isSelected;
-    whatSelected = dummy.id;
+
+    if (dummy.id == '001') {
+      whatSelected = SelectionType.series;
+    } else if (dummy.id == '002') {
+      whatSelected = SelectionType.movie;
+    } else {
+      whatSelected = SelectionType.myList;
+    }
+
     notifyListeners();
   }
 
-  String getWhatSelected() {
-    return items.firstWhere((element) => element.isSelected).id;
+  SelectionType getWhatSelected() {
+    return whatSelected;
   }
 }
